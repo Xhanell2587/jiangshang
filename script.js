@@ -60,15 +60,28 @@
     list.forEach((v, i) => {
       const card = document.createElement('div');
       card.className = 'video-card';
+      const title = v.title || '未命名';
+      const initial = title.trim().slice(0, 2);
+      const isExternal = /^https?:\/\//i.test(v.src || '') && v.openInPage === false;
+      const coverURL = resolveLocalPath(v.cover);
+
       card.innerHTML = `
-        <div class="video-thumb" style="background-image:url('${v.cover || ''}')">
-          <div class="video-play">▶</div>
+        <div class="video-thumb">
+          <div class="video-fallback">${escapeHTML(initial)}</div>
+          ${coverURL ? `<img class="video-cover" alt="" src="${escapeAttr(coverURL)}">` : ''}
+          <div class="video-play">${isExternal ? '↗' : '▶'}</div>
+          ${isExternal ? '<div class="video-tag">外链跳转</div>' : ''}
         </div>
         <div class="video-meta">
-          <h3 class="video-title">${escapeHTML(v.title || '未命名')}</h3>
+          <h3 class="video-title">${escapeHTML(title)}</h3>
           <p class="video-desc">${escapeHTML(v.desc || '')}</p>
         </div>`;
-      card.addEventListener('click', () => openVideo(v));
+
+      // 封面加载失败 → 隐藏 img，露出 fallback
+      const img = card.querySelector('.video-cover');
+      if(img) img.addEventListener('error', () => img.remove());
+
+      card.addEventListener('click', () => handleVideoClick(v));
       videoGrid.appendChild(card);
     });
   }
@@ -135,15 +148,26 @@
       return { kind:'iframe', url:s, original:s };
     }
 
-    // 默认作为本地 / 直链视频文件处理
-    return { kind:'video', url:s, original:s };
+    // 默认作为本地 / 直链视频文件处理（自动补 videos/ 前缀）
+    return { kind:'video', url:resolveLocalPath(s), original:s };
   }
 
-  function openVideo(v){
+  // 入口：根据 openInPage 决定是弹预览还是直接跳转
+  function handleVideoClick(v){
     if(!v.src){
       alert('该视频尚未上传。\n请将视频文件放入 videos/ 文件夹，或在 videos/manifest.json 的 src 中填入外链（B站/油管/视频号等）。');
       return;
     }
+    const isURL = /^https?:\/\//i.test(v.src);
+    if(isURL && v.openInPage === false){
+      window.open(v.src, '_blank', 'noopener');
+      return;
+    }
+    openVideo(v);
+  }
+
+  function openVideo(v){
+    if(!v.src) return;
     const info = resolveSource(v.src, v.type);
     modalPlayer.innerHTML = '';
 
@@ -273,5 +297,14 @@
     return String(s).replace(/[&<>"']/g, c => ({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     })[c]);
+  }
+  function escapeAttr(s){ return escapeHTML(s); }
+
+  // 相对路径自动加 videos/ 前缀（封面 / 本地视频文件名）
+  function resolveLocalPath(p){
+    if(!p) return '';
+    if(/^https?:\/\//i.test(p) || p.startsWith('/') || p.startsWith('data:')) return p;
+    if(p.startsWith('videos/') || p.startsWith('./')) return p;
+    return 'videos/' + p;
   }
 })();

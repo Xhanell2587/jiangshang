@@ -1,9 +1,10 @@
 [
   {
-    "title": "外婆的澎湖湾（本地）",
-    "desc": "本地视频文件示例。把 .mp4/.mov 放入 videos/ 即可。",
+    "title": "外婆的澎湖湾",
+    "desc": "微信视频号·点击直接跳转外站。",
     "cover": "waipo.png",
-    "src": "https://weixin.qq.com/sph/AT6cjNMmKJ"
+    "src": "https://weixin.qq.com/sph/AT6cjNMmKJ",
+    "openInPage": false
   },
   {
     "title": "B 站示例：哲学概论",
@@ -18,8 +19,8 @@
     "src": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
   },
   {
-    "title": "微信视频号示例",
-    "desc": "把视频号「嵌入分享」中的 iframe 链接直接粘到 src。",
+    "title": "微信视频号示例（嵌入）",
+    "desc": "若使用官方「嵌入分享」链接可直接弹播。",
     "cover": "https://picsum.photos/seed/video4/640/360",
     "src": "https://channels.weixin.qq.com/share/video/EXAMPLE_ID"
   },
