@@ -1,24 +1,47 @@
 # 视频文件夹
 
-将你的视频文件（如 `.mp4`、`.webm`）放在此文件夹内，然后在 `manifest.json` 中添加或修改条目：
+视频可以是**本地文件**，也可以是**外部平台链接**。在 `manifest.json` 中按下面格式配置即可。
+
+## 通用字段
 
 ```json
-[
-  {
-    "title": "视频标题",
-    "desc":  "一段简介",
-    "cover": "封面图片地址（本地相对路径或外链）",
-    "src":   "my-video.mp4"
-  }
-]
+{
+  "title": "视频标题",
+  "desc":  "一段简介",
+  "cover": "封面图（本地相对路径或外链）",
+  "src":   "本地文件名 或 外链 URL",
+  "type":  "可选：'video' / 'iframe' 强制覆盖自动识别"
+}
 ```
 
-字段说明：
+- `src` 留空 → 显示在网页上但点开会提示"尚未上传"
+- 自动识别规则：
+  - `*.mp4 / .webm / .ogg / .mov / .m4v` → 本地直链播放
+  - 其它 `http(s)://...` 链接 → 用 iframe 嵌入
 
-- `title`：视频标题
-- `desc`：简介（可选）
-- `cover`：封面图，可填本地路径如 `covers/a.jpg`，也可填网络地址
-- `src`：视频文件相对路径或完整 URL；留空则表示"待上传"
+## 已支持的外部平台
 
-> 网页打开时若用 `file://` 协议，部分浏览器不允许 fetch 本地 JSON。
-> 推荐使用：`python3 -m http.server 8000`，然后访问 `http://localhost:8000`。
+| 平台 | 你只需粘贴 | 自动转换为 |
+| --- | --- | --- |
+| **本地文件** | `waipoa.mp4` | `<video>` 直接播放 |
+| **Bilibili** | `https://www.bilibili.com/video/BV1xx411x7xx` | `player.bilibili.com/player.html?bvid=...` |
+| **Bilibili (av)** | `https://www.bilibili.com/video/av170001` | `player.bilibili.com/player.html?aid=...` |
+| **YouTube** | `https://youtube.com/watch?v=ID`、`youtu.be/ID`、`/shorts/ID` | `youtube.com/embed/ID` |
+| **Vimeo** | `https://vimeo.com/76979871` | `player.vimeo.com/video/76979871` |
+| **微信视频号** | `https://channels.weixin.qq.com/share/video/...` | 直接 iframe（请使用"嵌入分享"得到的链接） |
+| **其它网页** | 任意 `http(s)://...` | 默认作为 iframe 嵌入 |
+
+## 一些细节
+
+- **B 站分 P**：原 URL 带 `?p=2` 时会自动保留分 P。
+- **微信视频号**：必须用官方"嵌入分享"功能拿到的 URL，普通分享链接不能跨域嵌入。
+- **YouTube / 部分外链**：在中国大陆可能无法访问，属于网络环境问题。
+- **HTTPS**：本站若部署到 HTTPS，外链也最好是 HTTPS，否则浏览器会拦截 mixed content。
+
+## 启动
+
+```bash
+cd jiangshang
+python3 -m http.server 8000
+# 浏览器访问 http://localhost:8000
+```

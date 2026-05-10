@@ -75,27 +75,104 @@
 
   // ----- Video modal -----
   const modal = document.getElementById('videoModal');
-  const modalVideo = document.getElementById('modalVideo');
+  const modalPlayer = document.getElementById('modalPlayer');
   const modalTitle = document.getElementById('modalTitle');
   const modalDesc  = document.getElementById('modalDesc');
+  const modalLink  = document.getElementById('modalLink');
   const modalClose = modal.querySelector('.modal-close');
   const modalBackdrop = modal.querySelector('.modal-backdrop');
 
+  // 识别外链平台并返回可嵌入的播放器信息
+  function resolveSource(src, explicitType){
+    if(!src) return null;
+    const s = String(src).trim();
+
+    // 显式 type 优先
+    if(explicitType === 'iframe') return { kind:'iframe', url:s, original:s };
+    if(explicitType === 'video')  return { kind:'video',  url:s, original:s };
+
+    // YouTube：watch?v=, youtu.be/, /shorts/, /embed/
+    let m;
+    if((m = s.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/))){
+      return { kind:'iframe', url:`https://www.youtube.com/embed/${m[1]}?autoplay=1&rel=0`, original:s };
+    }
+
+    // Bilibili：BV / av / 已是 player 页
+    if(/player\.bilibili\.com\/player\.html/.test(s)){
+      return { kind:'iframe', url:s, original:s };
+    }
+    if((m = s.match(/bilibili\.com\/video\/(BV[\w]+)/))){
+      const p = new URL(s, location.href);
+      const part = p.searchParams.get('p') || '1';
+      return {
+        kind:'iframe',
+        url:`https://player.bilibili.com/player.html?bvid=${m[1]}&page=${part}&autoplay=0&high_quality=1`,
+        original:s
+      };
+    }
+    if((m = s.match(/bilibili\.com\/video\/av(\d+)/))){
+      return {
+        kind:'iframe',
+        url:`https://player.bilibili.com/player.html?aid=${m[1]}&autoplay=0&high_quality=1`,
+        original:s
+      };
+    }
+
+    // 微信视频号：channels.weixin.qq.com 是官方嵌入域；
+    // weixin.qq.com/sph/... 是分享短链（注意：微信对 iframe 有防盗链，部分场景会被拒绝）
+    if(/channels\.weixin\.qq\.com/.test(s) || /weixin\.qq\.com\/sph\//.test(s)){
+      return { kind:'iframe', url:s, original:s };
+    }
+
+    // 西瓜 / 抖音 / Vimeo 等通用 iframe 嵌入页
+    if(/vimeo\.com\/(?:video\/)?(\d+)/.test(s)){
+      const id = s.match(/vimeo\.com\/(?:video\/)?(\d+)/)[1];
+      return { kind:'iframe', url:`https://player.vimeo.com/video/${id}`, original:s };
+    }
+
+    // 看上去是网页链接但不是已知平台 → 仍尝试 iframe
+    if(/^https?:\/\//i.test(s) && !/\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/i.test(s)){
+      return { kind:'iframe', url:s, original:s };
+    }
+
+    // 默认作为本地 / 直链视频文件处理
+    return { kind:'video', url:s, original:s };
+  }
+
   function openVideo(v){
     if(!v.src){
-      alert('该视频尚未上传。\n请将视频文件放入 videos/ 文件夹，并在 videos/manifest.json 中填写 src 字段。');
+      alert('该视频尚未上传。\n请将视频文件放入 videos/ 文件夹，或在 videos/manifest.json 的 src 中填入外链（B站/油管/视频号等）。');
       return;
     }
-    modalVideo.src = v.src;
+    const info = resolveSource(v.src, v.type);
+    modalPlayer.innerHTML = '';
+
+    if(info.kind === 'iframe'){
+      const iframe = document.createElement('iframe');
+      iframe.src = info.url;
+      iframe.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
+      iframe.allowFullscreen = true;
+      iframe.referrerPolicy = 'no-referrer';
+      iframe.scrolling = 'no';
+      modalPlayer.appendChild(iframe);
+    }else{
+      const video = document.createElement('video');
+      video.src = info.url;
+      video.controls = true;
+      video.playsInline = true;
+      modalPlayer.appendChild(video);
+      video.play().catch(()=>{});
+    }
+
     modalTitle.textContent = v.title || '';
-    modalDesc.textContent = v.desc || '';
+    modalDesc.textContent  = v.desc  || '';
+    modalLink.innerHTML = /^https?:\/\//i.test(info.original)
+      ? `原始链接：<a href="${info.original}" target="_blank" rel="noopener">${escapeHTML(info.original)}</a>`
+      : '';
     modal.hidden = false;
-    modalVideo.play().catch(()=>{});
   }
   function closeVideo(){
-    modalVideo.pause();
-    modalVideo.removeAttribute('src');
-    modalVideo.load();
+    modalPlayer.innerHTML = ''; // 清空 iframe / video，停止播放
     modal.hidden = true;
   }
   modalClose.addEventListener('click', closeVideo);
