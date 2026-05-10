@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>江上晴川</title>
+<link rel="stylesheet" href="styles.css" />
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container nav-wrap">
+    <a class="brand" href="#top">江上晴川</a>
+    <nav class="nav-menu">
+      <a href="#about">关于</a>
+      <a href="#videos">视频</a>
+      <a href="#notes">手记</a>
+      <a href="#contact">联系</a>
+    </nav>
+    <button class="nav-toggle" aria-label="菜单">☰</button>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="container hero-inner">
+      <h1 class="hero-title">
+        驾行当下，日新其德<br/>
+        心怀热望，学海无涯<br/>
+        同道相伴，共持耕耘
+      </h1>
+      <p class="hero-sub">愿与诸君，于江上得清风，听明月，养精神。</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#videos">浏览视频</a>
+        <a class="btn btn-ghost" href="#notes">阅读手记</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="section">
+    <div class="container">
+      <h2 class="section-title">关于我</h2>
+      <div class="about-grid">
+        <div class="about-img">
+          <img src="https://picsum.photos/seed/aboutme/600/400" alt="关于我" />
+        </div>
+        <div class="about-text">
+          <h3>你好，我是江上闲人</h3>
+          <p>本站记录我日常的视频与文字。视频精选放在「视频精选」，思绪与读书心得则收在「手记日志」。</p>
+          <p>愿这一方小院，能与你共话山海，互相照亮。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="videos" class="section section-alt">
+    <div class="container">
+      <h2 class="section-title">视频精选</h2>
+      <p class="section-desc">视频文件存放于 <code>./videos/</code> 文件夹，编辑 <code>videos/manifest.json</code> 即可新增或修改。</p>
+      <div id="videoGrid" class="video-grid"></div>
+    </div>
+  </section>
+
+  <section id="notes" class="section">
+    <div class="container">
+      <h2 class="section-title">手记日志</h2>
+      <p class="section-desc">手记以 Markdown 格式存放于 <code>./notes/</code> 文件夹，编辑 <code>notes/manifest.json</code> 即可新增或修改。</p>
+      <div class="notes-layout">
+        <aside id="noteList" class="note-list"></aside>
+        <article id="noteView" class="note-view">
+          <p class="note-placeholder">选择左侧任一篇手记开始阅读…</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="section section-alt">
+    <div class="container contact-wrap">
+      <h2 class="section-title">联系方式</h2>
+      <div class="contact-links">
+        <a href="mailto:hello@example.com">邮箱</a>
+        <a href="#">微信</a>
+        <a href="#">微博</a>
+        <a href="#">B站</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>© 2026 江上晴川 · All rights reserved.</p>
+  </div>
+</footer>
+
+<div id="videoModal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="modal-body">
+    <button class="modal-close" aria-label="关闭">×</button>
+    <video id="modalVideo" controls playsinline></video>
+    <h3 id="modalTitle"></h3>
+    <p id="modalDesc"></p>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
