@@ -8,27 +8,6 @@
     "title" : "外婆的澎湖湾"
   },
   {
-    "cover" : "https://picsum.photos/seed/video3/640/360",
-    "desc" : "支持 watch?v= / youtu.be / shorts 多种格式。",
-    "id" : "298B9073-169C-4B6D-9E2D-815AE91531DC",
-    "src" : "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    "title" : "YouTube 示例"
-  },
-  {
-    "cover" : "https://picsum.photos/seed/video4/640/360",
-    "desc" : "若使用官方「嵌入分享」链接可直接弹播。",
-    "id" : "4F0D5461-B41C-446C-ABBA-CE0F6B280D10",
-    "src" : "https://channels.weixin.qq.com/share/video/EXAMPLE_ID",
-    "title" : "微信视频号示例（嵌入）"
-  },
-  {
-    "cover" : "https://picsum.photos/seed/video5/640/360",
-    "desc" : "支持 vimeo.com/<id> 自动转嵌入。",
-    "id" : "329448C4-E14F-4319-949F-A2B6811545D6",
-    "src" : "dx-4.mov",
-    "title" : "Vimeo 示例"
-  },
-  {
     "cover" : "dingxiang.png",
     "desc" : "",
     "id" : "0BFCBFB0-A476-4CDA-8280-BFCC61999659",
