@@ -245,6 +245,8 @@ code{
 .note-view ul, .note-view ol{padding-left:1.4em}
 .note-view img{border-radius:8px;margin:1em 0}
 .note-view a{color:var(--gold-2);text-decoration:underline}
+.note-view .katex{color:var(--ink);font-size:1.05em}
+.note-view .katex-display>.katex{text-align:center}
 
 /* ===== Contact ===== */
 .contact-wrap{text-align:center}

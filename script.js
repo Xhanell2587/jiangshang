@@ -256,6 +256,10 @@
   async function loadNote(n){
     if(!n.file){
       noteView.innerHTML = marked.parse(sampleNoteBody);
+      renderMathInElement(noteView, { delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ]});
       return;
     }
     try{
@@ -263,6 +267,10 @@
       if(!res.ok) throw new Error(res.status);
       const md = await res.text();
       noteView.innerHTML = marked.parse(md);
+      renderMathInElement(noteView, { delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ]});
     }catch(e){
       noteView.innerHTML = `<p class="note-placeholder">加载失败：${escapeHTML(n.file)}</p>`;
     }
